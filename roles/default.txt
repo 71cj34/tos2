@@ -4,11 +4,11 @@ tk
 tpow
 tp
 ts
-ti/tp/tk
+~ct
 cpow
 ck
 cd
-cc
+~cc
 ne
 ne/nk
 na/nk
