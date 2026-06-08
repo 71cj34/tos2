@@ -27,20 +27,19 @@ type Player struct {
 }
 
 func InitPlayers() int {
-	Players := make([]Player, 15)
+	Players = make([]Player, 15)
 
- 	for i := 0; i < 15; i++ {
-        Players[i] = Player{
-            alive: true,
-            team: "",
-            alignment: "",
-            role: "",
-            atk: 0,
-            def: 0,
-            votes: 0,
-            statuses: Statuses{},
-        }
-    }
+	for i := 0; i < 15; i++ {
+		Players[i] = Player{
+			alive:    true,
+			team:     "",
+			role:     "",
+			atk:      0,
+			def:      0,
+			votes:    0,
+			statuses: Statuses{},
+		}
+	}
 
 	return 0
 }
