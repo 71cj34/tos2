@@ -1,6 +1,10 @@
 package abrev
 
-import "strings"
+import (
+	"strings"
+	"math/rand"
+
+)
 
 type RoleCategory struct {
 	Name       string
@@ -99,22 +103,26 @@ var roleData = []RoleCategory{
 }
 
 // get a role's alignment
-func GetCategory(key string) string {
-	for _, cat := range roleCategories {
-		if _, exists := cat.Roles[key]; exists {
-			return cat.Name
+func GetCategory(key string) (string, bool) {
+	for _, cat := range roleData {
+		for _, align := range cat.Alignments {
+			if _, exists := align.Roles[key]; exists {
+				return cat.Name, true
+			}
 		}
 	}
-	return "Unknown"
+	return "", false
 }
 
 // value -> key
 func RepackRole(value string) (string, bool) {
 	searchVal := strings.ToLower(value)
-	for _, cat := range roleCategories {
-		for k, v := range cat.Roles {
-			if strings.ToLower(v) == searchVal {
-				return k, true
+	for _, cat := range roleData {
+		for _, align := range cat.Alignments {
+			for k, v := range align.Roles {
+				if strings.ToLower(v) == searchVal {
+					return k, true
+				}
 			}
 		}
 	}
@@ -123,18 +131,36 @@ func RepackRole(value string) (string, bool) {
 
 // key -> value
 func UnpackRole(key string) (string, bool) {
-	for _, cat := range roleCategories {
-		if val, exists := cat.Roles[key]; exists {
-			return val, true
+	for _, cat := range roleData {
+		for _, align := range cat.Alignments {
+			if val, exists := align.Roles[key]; exists {
+				return val, true
+			}
 		}
 	}
 	return "", false
 }
 
 func GetRandomRoleFromAlignment(key string) (string, bool) {
+	for _, cat := range roleData {
+		if align, exists := cat.Alignments[key]; exists {
+			keys := make([]string, 0, len(align.Roles))
+			for k := range align.Roles {
+				keys = append(keys, k)
+			}
 
+			return keys[rand.Intn(len(keys))], true
+		}
+	}
+	return "", false
 }
 
 func GetRandomRoleFromAlignments(keys []string) (string, bool) {
+	if len(keys) == 0 {
+		return "", false
+	}
 
+	target := keys[rand.Intn(len(keys))]
+
+	return GetRandomRoleFromAlignment(target)
 }
