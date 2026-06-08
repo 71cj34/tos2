@@ -9,5 +9,6 @@ func main() {
 	// the idea in here is to start the game, set varaiables, start controller
 	// keep it light
 	fmt.Println("Starting:")
+	game.InitPlayers()
 	game.GenRoles()
 }
