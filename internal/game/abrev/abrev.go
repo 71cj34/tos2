@@ -16,6 +16,29 @@ type AlignmentCategory struct {
 	Roles map[string]string
 }
 
+var banned = []string {
+	"war",
+	"death",
+	"famine",
+	"pest",
+}
+
+var uniqueRoles = []string{
+	"pros",
+	"marsh",
+	"jailor",
+	"mayor",
+	"mon",
+
+	"exe",
+	"pirate",
+
+	"baker",
+	"bers",
+	"pb",
+	"sc",
+}
+
 var roleData = []RoleCategory{
 	{
 		Name: "Town",
