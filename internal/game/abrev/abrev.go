@@ -3,50 +3,102 @@ package abrev
 import "strings"
 
 type RoleCategory struct {
+	Name       string
+	Alignments map[string]AlignmentCategory
+}
+
+type AlignmentCategory struct {
 	Name  string
 	Roles map[string]string
 }
 
-var roleCategories = []RoleCategory{
+var roleData = []RoleCategory{
 	{
-		Name: "t",
-		Roles: map[string]string{
-			"admi": "admirer", "amne": "amnesiac", "bg": "bodyguard", "coro": "coroner",
-			"crus": "crusader", "cleric": "cleric", "dep": "deputy", "invest": "investigator",
-			"jailor": "jailor", "lo": "lookout", "marsh": "marshal", "mayor": "mayor",
-			"mon": "monarch", "oracle": "oracle", "pros": "prosecutor", "psy": "psychic",
-			"ret": "retributionist", "seer": "seer", "soc": "socialite", "spy": "spy",
-			"tav": "tavern keeper", "track": "tracker", "trapper": "trapper",
-			"trick": "trickster", "sheriff": "sheriff", "vet": "veteran", "vig": "vigilante",
+		Name: "Town",
+		Alignments: map[string]AlignmentCategory{
+			"tp": {Name: "Town Protective", Roles: map[string]string{
+				"bg":      "bodyguard",
+				"crus":    "crusader",
+				"cleric":  "cleric",
+				"trapper": "trapper",
+				"oracle":  "oracle",
+			}},
+			"ti": {Name: "Town Investigative", Roles: map[string]string{
+				"coro":    "coroner",
+				"invest":  "investigator",
+				"lo":      "lookout",
+				"psy":     "psychic",
+				"seer":    "seer",
+				"spy":     "spy",
+				"track":   "tracker",
+				"sheriff": "sheriff",
+			}},
+			"tpow": {Name: "Town Power", Roles: map[string]string{
+				"jailor": "jailor",
+				"mayor":  "mayor",
+				"mon":    "monarch",
+				"pros":   "prosecutor",
+				"marsh":  "marshal",
+			}},
+			"ts": {Name: "Town Support", Roles: map[string]string{
+				"admi": "admirer",
+				"amne": "amnesiac",
+				"ret":  "retributionist",
+				"soc":  "socialite",
+				"tav":  "tavern keeper",
+			}},
+			"tk": {Name: "Town Killing", Roles: map[string]string{
+				"dep":   "deputy",
+				"trick": "trickster",
+				"vet":   "veteran",
+				"vig":   "vigilante",
+			}},
 		},
 	},
 	{
-		Name: "c",
-		Roles: map[string]string{
-			"cl": "archmage", "conj": "conjurer", "dusa": "medusa", "dw": "dreamweaver",
-			"ench": "enchanter", "hex": "hex master", "illu": "illusionist", "jinx": "jinx",
-			"necro": "necromancer", "pois": "poisoner", "pm": "potion master", "rit": "ritualist",
-			"vm": "voodoo master", "witch": "witch", "wild": "wildling",
+		Name: "Coven",
+		Alignments: map[string]AlignmentCategory{
+			"ck": {Name: "Coven Killing", Roles: map[string]string{
+				"conj": "conjurer",
+				"rit":  "ritualist",
+				"jinx": "jinx",
+			}},
+			"cpow": {Name: "Coven Power", Roles: map[string]string{
+				"cl":    "archmage",
+				"hex":   "hex master",
+				"witch": "witch",
+			}},
+			"cd": {Name: "Coven Deception", Roles: map[string]string{
+				"dw":   "dreamweaver",
+				"ench": "enchanter",
+				"dusa": "medusa",
+				"illu": "illusionist",
+			}},
+			"cu": {Name: "Coven Utility", Roles: map[string]string{
+				"necro": "necromancer",
+				"pois":  "poisoner",
+				"pm":    "potion master",
+				"vm":    "voodoo master",
+				"wild":  "wildling",
+			}},
 		},
 	},
 	{
-		Name: "na",
-		Roles: map[string]string{
-			"sc": "soul collector", "pb": "plaguebearer", "bers": "berserker",
-			"baker": "baker", "death": "death", "famine": "famine",
-			"pest": "pestilence", "war": "war",
+		Name: "Neutral",
+		Alignments: map[string]AlignmentCategory{
+			"nk": {Name: "Neutral Killing", Roles: map[string]string{"arso": "arsonist", "sk": "serial killer", "shroud": "shroud", "ww": "werewolf"}},
+			"ne": {Name: "Neutral Evil", Roles: map[string]string{"exe": "executioner", "jest": "jester", "pirate": "pirate", "doom": "doomsayer"}},
 		},
 	},
 	{
-		Name: "n",
-		Roles: map[string]string{
-			"arso": "arsonist", "doom": "doomsayer", "exe": "executioner",
-			"jest": "jester", "pirate": "pirate", "sk": "serial killer",
-			"shroud": "shroud", "ww": "werewolf",
+		Name: "Neutral Apocalypse",
+		Alignments: map[string]AlignmentCategory{
+			"na": {Name: "Neutral Apocalypse", Roles: map[string]string{"sc": "soul collector", "pb": "plaguebearer", "bers": "berserker", "baker": "baker", "death": "death", "famine": "famine", "pest": "pestilence", "war": "war"}},
 		},
 	},
 }
 
+// get a role's alignment
 func GetCategory(key string) string {
 	for _, cat := range roleCategories {
 		if _, exists := cat.Roles[key]; exists {
@@ -56,6 +108,7 @@ func GetCategory(key string) string {
 	return "Unknown"
 }
 
+// value -> key
 func RepackRole(value string) (string, bool) {
 	searchVal := strings.ToLower(value)
 	for _, cat := range roleCategories {
@@ -68,6 +121,7 @@ func RepackRole(value string) (string, bool) {
 	return "", false
 }
 
+// key -> value
 func UnpackRole(key string) (string, bool) {
 	for _, cat := range roleCategories {
 		if val, exists := cat.Roles[key]; exists {
@@ -75,4 +129,12 @@ func UnpackRole(key string) (string, bool) {
 		}
 	}
 	return "", false
+}
+
+func GetRandomRoleFromAlignment(key string) (string, bool) {
+
+}
+
+func GetRandomRoleFromAlignments(keys []string) (string, bool) {
+
 }
