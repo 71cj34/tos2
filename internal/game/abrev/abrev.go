@@ -3,7 +3,7 @@ package abrev
 import (
 	"strings"
 	"math/rand"
-
+	"slices"
 )
 
 type RoleCategory struct {
@@ -102,16 +102,16 @@ var roleData = []RoleCategory{
 	},
 }
 
-// get a role's alignment
-func GetCategory(key string) (string, bool) {
+// get a role's alignment/team
+func GetUpperInfo(key string) (string, string, bool) {
 	for _, cat := range roleData {
 		for _, align := range cat.Alignments {
 			if _, exists := align.Roles[key]; exists {
-				return cat.Name, true
+				return cat.Name, align.Name, true
 			}
 		}
 	}
-	return "", false
+	return "", "", false
 }
 
 // value -> key
@@ -142,17 +142,32 @@ func UnpackRole(key string) (string, bool) {
 }
 
 func GetRandomRoleFromAlignment(key string) (string, bool) {
-	for _, cat := range roleData {
-		if align, exists := cat.Alignments[key]; exists {
-			keys := make([]string, 0, len(align.Roles))
-			for k := range align.Roles {
-				keys = append(keys, k)
-			}
+    var result string
+    // the hackiest way ever to stop >4 na
+    for i := 0; i < 150; i++ {
+        for _, cat := range roleData {
+            if align, exists := cat.Alignments[key]; exists {
+                keys := make([]string, 0, len(align.Roles))
+                for k := range align.Roles {
+                    keys = append(keys, k)
+                }
 
-			return keys[rand.Intn(len(keys))], true
-		}
-	}
-	return "", false
+                result = keys[rand.Intn(len(keys))]
+
+                if !slices.Contains(banned, result) {
+                    // if it's not banned and not already used, return it
+                    if !slices.Contains(uniqueRoles, result) {
+                        return result, true
+                    }
+                    // if it's not banned but already used, add to banned list
+                    banned = append(banned, result)
+                    return result, true
+                }
+
+            }
+        }
+    }
+    return "", false
 }
 
 func GetRandomRoleFromAlignments(keys []string) (string, bool) {
