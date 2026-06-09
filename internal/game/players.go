@@ -16,7 +16,9 @@ func (s Statuses) Contains(status string) bool {
 }
 
 type Player struct {
+	n int
 	alive bool
+	name string
 	team string
 	alignment string
 	role string
@@ -31,9 +33,12 @@ func InitPlayers() int {
 
 	for i := 0; i < 15; i++ {
 		Players[i] = Player{
+			n int
 			alive:    true,
+			name: "",
 			team:     "",
 			role:     "",
+			alignment: "",
 			atk:      0,
 			def:      0,
 			votes:    0,
