@@ -33,7 +33,7 @@ func InitPlayers() int {
 
 	for i := 0; i < 15; i++ {
 		Players[i] = Player{
-			n int
+			n: i,
 			alive:    true,
 			name: "",
 			team:     "",
